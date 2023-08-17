@@ -1,0 +1,10 @@
+#!/bin/bash
+cd /home/user1/230727docker
+python3 putapi.py
+
+if [ $? -eq 0 ]; then
+    echo "Success $(date +'%Y-%m-%d %H:%M:%S')" >> /home/user1/230727docker/log.txt
+else
+    echo "Failure $(date +'%Y-%m-%d %H:%M:%S') - Error: $(cat putapi.py.err)" >> /home/user1/230727docker/log.txt
+fi
+

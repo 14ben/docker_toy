@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+    command: >
+      bash -c "
+        /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-nori &&
+        /usr/local/bin/docker-entrypoint.sh
+      "
+    ports:
+      - "9200:9200"
+    networks:
+      - elk-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - elk-network
+    depends_on:
+      - elasticsearch
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  elk-network:
+    driver: overlay
+
